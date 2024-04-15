@@ -47,21 +47,7 @@ class Player:
       self.max_ammo = 6
       self.ammo = 6
       self.reload_time = 2
-
-  def movement(self, dt, game):
-    # Board block
-    self.position.x = max(min(self.position.x, game.screen_width - 40), 40)
-    self.position.y = max(min(self.position.y, game.screen_height - 40), 40)
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_w]:
-      self.position.y -= self.speed * dt
-    if keys[pygame.K_s]:
-      self.position.y += self.speed * dt
-    if keys[pygame.K_a]:
-      self.position.x -= self.speed * dt
-    if keys[pygame.K_d]:
-      self.position.x += self.speed * dt
-
+  # Set immortality if player gets hit
   def check_getHit(self, enemy_array, game):
     if self.immortality == True:
         return
@@ -85,7 +71,7 @@ class Player:
               set_immortality_thread = threading.Thread(target=self.set_immortality)
               set_immortality_thread.start()
               break
-    
+  # Add a bonus in stats based on perk
   def check_perk(self, perk_array):
     for perk in perk_array:
       if ((self.position.x >= perk.position.x - 30) and (self.position.x <= perk.position.x  + 70)) and ((self.position.y >= perk.position.y -40) and (self.position.y <= perk.position.y +40)):

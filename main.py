@@ -34,7 +34,7 @@ def main():
                     exit = True
                     game.menu = False
                     break
-                elif event.type == pygame.MOUSEBUTTONDOWN:
+                elif event.type == pygame.MOUSEBUTTONDOWN: # Mouse interaction
                     mouse_pos = pygame.mouse.get_pos()
                     if pygame.Rect(700, 100, 200, 50).collidepoint(mouse_pos):
                         game.menu = False
@@ -67,7 +67,6 @@ def main():
                 spawn_enemy_thread.start()
                 game.isSpawn = True
 
-            # Poll for events
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     exit = True
@@ -83,7 +82,7 @@ def main():
                         reload_thread = threading.Thread(target=player.reload)
                         reload_thread.start()
 
-            # Get key presses
+            # Player move
             keys = pygame.key.get_pressed()
             if keys[pygame.K_w]:
                 player.position.y -= player.speed * game.dt

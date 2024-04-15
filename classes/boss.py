@@ -18,6 +18,7 @@ class Boss:
     self.spawn_arrow = False
     self.ready = True
 
+  # Attack that move Boss to player
   def attack(self, player, game):
     self.speed = 1200
     if self.player_pos == None:
@@ -29,6 +30,7 @@ class Boss:
       wait_thread = threading.Thread(target=self.wait, args=([1]))
       wait_thread.start()
 
+  # Special attack that generates additional enemeis
   def attack2(self, game, enemy_array, screen_width, screen_height):
     self.speed = 600
     direction = (pygame.Vector2(screen_width/2, screen_height/2) - self.position).normalize() * self.speed * game.dt

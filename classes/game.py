@@ -33,14 +33,13 @@ class Game:
     self.arrow_array = []
     self.perk_array = []
 
-
+  # Move camera to player
   def update_camera_offset(self, player):
     self.camera_offset.x = min(max(self.window_size[0] / 2 - player.position.x, self.window_size[0] - self.screen_width), 0)
     self.camera_offset.y = min(max(self.window_size[1] / 2 - player.position.y, self.window_size[1] - self.screen_height), 0)
 
-  # Function to spawn enemies
+
   def spawn_enemy(self, player):
-    # Chance to spawn
     monsters = [1,3]
     chanses = [0.4, 0.2]
     while self.running and not self.boss_fight:
@@ -52,7 +51,7 @@ class Game:
         if player.position.distance_to(pygame.Vector2(x, y)) >= 700:
             enemy_type = random.choices(monsters, weights = chanses)[0]
             self.enemy_array.append(Enemy(pygame.Vector2(x, y), enemy_type))
-        time.sleep(0.5)  # Spawns every 0.5 second
+        time.sleep(0.5)
 
   def spawn_perk(self):
      perks = [1,2,3]
@@ -67,26 +66,25 @@ class Game:
         self.perk_array.append(Perk(pygame.Vector2(x,y),perk_type))
         time.sleep(5)
 
-  # Function to move enemies towards the player
+
   def move_enemies(self, player):
     for enemy in self.enemy_array:
         direction = ((player.position -pygame.Vector2(30,30)) - enemy.position).normalize() * enemy.speed * self.dt
         enemy.position += direction
 
-  # Function to spawn arrow
   def spawn_arrow(self, player):
     if player.is_reload == True:
         return
     cursor = pygame.Vector2(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1]).copy()
-    starting_pos = (player.position.copy() + self.camera_offset) # Uwzględnienie przesunięcia kamery
+    starting_pos = (player.position.copy() + self.camera_offset) 
     direction = (cursor - starting_pos).normalize() * 200 * self.dt
     arrow = Arrow(starting_pos, cursor, direction)
-    arrow.angle = math.atan2(direction.y, direction.x)  # Obliczenie kąta dla obrotu
+    arrow.angle = math.atan2(direction.y, direction.x) 
     self.arrow_array.append(arrow)
 
   def move_arrow(self):
     for arrow in self.arrow_array:
-        arrow.position += arrow.direction * 200 * self.dt  # Ruch strzały
+        arrow.position += arrow.direction * 200 * self.dt
         if arrow.position.x > 2000 or arrow.position.y > 2000 or arrow.position.x < -2000 or arrow.position.y < -2000:
             self.arrow_array.remove(arrow)
         

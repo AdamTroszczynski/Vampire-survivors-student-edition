@@ -3,7 +3,7 @@ import math
 import time
 from classes.texture_loader import shield, shield_dis, skull, arrow, enemy4, enemy5, map1_boss, lighting, star, enemy1, status_bar, enemy3, boots, arrow_ammo, arrow_ammo_dis, lighting_ammo, lighting_ammo_dis, star_ammo, star_ammo_dis, knight, knight_hit, wizard, wizard_hit, king, king_hit
 
-
+# Drawing active/inactive shields/ammo
 def draw_shields(player, screen):
     for i in range(player.max_hp):
         player_center_screen = (int(0 + 30 + 60 * i ), int(0 + 30))
@@ -51,11 +51,9 @@ def draw_used_perk(screen, window_size, player):
 
 
 def draw_player(player,camera_offset, screen):
-    # Draw the player with rotation towards the mouse cursor
     player_center_screen = (int(player.position.x + camera_offset.x), int(player.position.y + camera_offset.y))
     mouse_pos = pygame.mouse.get_pos()
     angle = math.atan2(mouse_pos[1] - player_center_screen[1], mouse_pos[0] - player_center_screen[0])
-    # Odwrócenie kąta o 180 stopni, aby postać patrzyła się w górę
     angle -= math.pi
     awatar = ''
     if player.category == 'warrior':
@@ -81,9 +79,9 @@ def draw_arrow(arrow_array, screen, player):
         for arrow_obj in arrow_array:
             screen_arrow_pos = (int(arrow_obj.position.x), int(arrow_obj.position.y))
             if player.category == 'warrior':
-                arrow_rotated = pygame.transform.rotate(arrow, (math.degrees(-arrow_obj.angle - math.pi) + 90))  # Użycie obliczonego kąta
+                arrow_rotated = pygame.transform.rotate(arrow, (math.degrees(-arrow_obj.angle - math.pi) + 90))  
             elif player.category == 'wizard': 
-                arrow_rotated = pygame.transform.rotate(lighting, (math.degrees(-arrow_obj.angle - math.pi) + 90))  # Użycie obliczonego kąta
+                arrow_rotated = pygame.transform.rotate(lighting, (math.degrees(-arrow_obj.angle - math.pi) + 90)) 
             elif player.category == 'king':
                 arrow_rotated = pygame.transform.rotate(star, (math.degrees(-arrow_obj.angle - math.pi) + 90))
             screen.blit(arrow_rotated, screen_arrow_pos)
@@ -129,10 +127,9 @@ def draw_menu(screen, map1, camera_offset, player):
     screen.blit(map1, (camera_offset.x, camera_offset.y))
     font = pygame.font.Font(None, 36)
 
-
-    # Wybór postaci
+    # Draw different characters to change
     hero1 = pygame.Rect(600, 700, 100, 100)
-    darker_hero1 = hero1.inflate(15, 15)  # Rozszerzenie prostokąta o 5 pikseli w każdym kierunku
+    darker_hero1 = hero1.inflate(15, 15)  
     if player.category == 'warrior':
         pygame.draw.rect(screen, (30,0,0), darker_hero1)
         pygame.draw.rect(screen, (60,0,0), hero1)
@@ -142,7 +139,7 @@ def draw_menu(screen, map1, camera_offset, player):
     screen.blit(knight, hero1_rect)
 
     hero2 = pygame.Rect(750, 700, 100, 100)
-    darker_hero2 = hero2.inflate(15, 15)  # Rozszerzenie prostokąta o 5 pikseli w każdym kierunku
+    darker_hero2 = hero2.inflate(15, 15) 
     if player.category == 'wizard':
         pygame.draw.rect(screen, (30,0,0), darker_hero2)
         pygame.draw.rect(screen, (60,0,0), hero2)
@@ -152,7 +149,7 @@ def draw_menu(screen, map1, camera_offset, player):
     screen.blit(wizard, hero2_rect)
 
     hero3 = pygame.Rect(900, 700, 100, 100)
-    darker_hero3 = hero3.inflate(15, 15)  # Rozszerzenie prostokąta o 5 pikseli w każdym kierunku
+    darker_hero3 = hero3.inflate(15, 15) 
     if player.category == 'king':
         pygame.draw.rect(screen, (30,0,0), darker_hero3)
         pygame.draw.rect(screen, (60,0,0), hero3)
@@ -161,7 +158,6 @@ def draw_menu(screen, map1, camera_offset, player):
     hero3_rect = king.get_rect(center=hero3.center)
     screen.blit(king, hero3_rect)
 
-    # Przyciski menu
     button1 = pygame.Rect(700, 100, 200, 50)
     pygame.draw.rect(screen, (255,255,255), button1)
     button1_text = font.render("Start", True, (0,0,0))
