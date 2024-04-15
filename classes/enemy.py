@@ -11,3 +11,10 @@ class Enemy:
     elif type == 3:
       self.speed = 250
       self.hp = 10
+
+    elif type == 4:
+      self.speed = 200
+      self.hp = 30
+    elif type == 5:
+      self.speed = 250 
+      self.hp = 20
