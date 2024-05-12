@@ -20,7 +20,7 @@ class Boss:
 
   # Attack that move Boss to player
   def attack(self, player, game):
-    self.speed = 1200
+    self.speed = 1300
     if self.player_pos == None:
       self.player_pos = player.position.copy()
     direction = ((self.player_pos -pygame.Vector2(30,30)) - self.position).normalize() * self.speed * game.dt
