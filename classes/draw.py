@@ -1,7 +1,7 @@
 import pygame
 import math
 import time
-from classes.texture_loader import shield, shield_dis, skull, arrow, enemy4, enemy5, map1_boss, lighting, star, enemy1, status_bar, enemy3, boots, arrow_ammo, arrow_ammo_dis, lighting_ammo, lighting_ammo_dis, star_ammo, star_ammo_dis, knight, knight_hit, wizard, wizard_hit, king, king_hit
+from classes.texture_loader import shield, shield_dis, skull,enemy1_1, enemy3_1, enemy4_1, enemy5_1, map2_boss, victory, arrow, enemy4, enemy5, map1_boss, lighting, star, enemy1, status_bar, enemy3, boots, arrow_ammo, arrow_ammo_dis, lighting_ammo, lighting_ammo_dis, star_ammo, star_ammo_dis, knight, knight_hit, wizard, wizard_hit, king, king_hit
 
 # Drawing active/inactive shields/ammo
 def draw_shields(player, screen):
@@ -86,21 +86,36 @@ def draw_arrow(arrow_array, screen, player):
                 arrow_rotated = pygame.transform.rotate(star, (math.degrees(-arrow_obj.angle - math.pi) + 90))
             screen.blit(arrow_rotated, screen_arrow_pos)
     
-def draw_enemy(enemy_array, camera_offset, screen):
+def draw_enemy(enemy_array, camera_offset, screen, turn):
      for enemy in enemy_array:
             screen_enemy_pos = (int(enemy.position.x + camera_offset.x), int(enemy.position.y + camera_offset.y))
             if enemy.type == 1:
-                screen.blit(enemy1, screen_enemy_pos)
+                if turn == 1:
+                    screen.blit(enemy1, screen_enemy_pos)
+                else:
+                    screen.blit(enemy1_1, screen_enemy_pos)
             if enemy.type == 3:
-                screen.blit(enemy3, screen_enemy_pos)
+                if turn == 1:
+                    screen.blit(enemy3, screen_enemy_pos)
+                else:
+                    screen.blit(enemy3_1, screen_enemy_pos)
             if enemy.type == 4:
-                screen.blit(enemy4, screen_enemy_pos)
+                if turn == 1:
+                    screen.blit(enemy4, screen_enemy_pos)
+                else:
+                    screen.blit(enemy4_1, screen_enemy_pos)
             if enemy.type == 5:
-                screen.blit(enemy5, screen_enemy_pos)
+                if turn == 1:
+                    screen.blit(enemy5, screen_enemy_pos)
+                else:
+                    screen.blit(enemy5_1, screen_enemy_pos)
 
-def draw_boss(boss, camera_offset, screen):
+def draw_boss(boss, camera_offset, screen, turn):
     screen_enemy_pos = (int(boss.position.x + camera_offset.x), int(boss.position.y + camera_offset.y))
-    screen.blit(map1_boss, screen_enemy_pos)
+    if turn == 1:
+        screen.blit(map1_boss, screen_enemy_pos)
+    else:
+        screen.blit(map2_boss, screen_enemy_pos)
 
 def draw_perk(perk_array, camera_offset, screen, player):
     for perk in perk_array:
@@ -121,6 +136,31 @@ def draw_perk(perk_array, camera_offset, screen, player):
 def draw_screen(screen, camera_offset, map1):
     screen.fill((0,0,0))
     screen.blit(map1, (camera_offset.x, camera_offset.y))
+
+def draw_finish(screen, camera_offset, screen_width, screen_height):
+    map = pygame.transform.scale(victory, (screen_width / 1.5, screen_height /1.5))
+    screen.blit(map, (camera_offset.x, camera_offset.y))
+    font = pygame.font.Font(None, 36)
+
+    button1 = pygame.Rect(700, 100, 200, 50)
+    pygame.draw.rect(screen, (255,255,255), button1)
+    button1_text = font.render("You win!", True, (0,0,0))
+    button1_text_rect = button1_text.get_rect(center=button1.center)
+    screen.blit(button1_text, button1_text_rect)
+
+    button2 = pygame.Rect(500, 700, 200, 50)
+    pygame.draw.rect(screen, (255,255,255), button2)
+    button2_text = font.render("Play again", True, (0,0,0))
+    button2_text_rect = button2_text.get_rect(center=button2.center)
+    screen.blit(button2_text, button2_text_rect)
+
+    button3 = pygame.Rect(900, 700, 200, 50)
+    pygame.draw.rect(screen, (255,255,255), button3)
+    button3_text = font.render("Exit", True, (0,0,0))
+    button3_text_rect = button3_text.get_rect(center=button3.center)
+    screen.blit(button3_text, button3_text_rect)
+
+   
 
 def draw_menu(screen, map1, camera_offset, player):
 

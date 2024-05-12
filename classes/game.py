@@ -7,11 +7,11 @@ from classes.enemy import Enemy
 from classes.arrow import Arrow
 from classes.perk import Perk
 from classes.boss import Boss
-from classes.texture_loader import gif, map1, map1_dark
-from classes.music_loader import set_map1_boss_music
+from classes.texture_loader import gif, map1, map1_dark, map2
+from classes.music_loader import set_map1_boss_music, set_map2_boss_music
 
 class Game:
-  def __init__(self, screen_width, screen_height, window_size): 
+  def __init__(self, screen_width, screen_height, window_size, map): 
     self.menu = True
     self.exit = False
     self.isSpawn = False
@@ -21,7 +21,12 @@ class Game:
     self.screen = pygame.display.set_mode(window_size)
     self.camera_offset = pygame.Vector2(0, 0)
     self.clock = pygame.time.Clock()
-    self.map = pygame.transform.scale(map1, (self.screen_width, self.screen_height))
+    if map == 1:
+       self.map = pygame.transform.scale(map1, (self.screen_width, self.screen_height))
+       self.turn = 1
+    else:
+       self.map = pygame.transform.scale(map2, (self.screen_width, self.screen_height))
+       self.turn = 2
     self.menu_map = pygame.transform.scale(gif, (self.screen_width / 1.5, self.screen_height /1.5))
     self.running = True
     self.isVictory = False
@@ -32,12 +37,16 @@ class Game:
     self.enemy_array = []
     self.arrow_array = []
     self.perk_array = []
+    self.finish = True
 
   # Move camera to player
   def update_camera_offset(self, player):
     self.camera_offset.x = min(max(self.window_size[0] / 2 - player.position.x, self.window_size[0] - self.screen_width), 0)
     self.camera_offset.y = min(max(self.window_size[1] / 2 - player.position.y, self.window_size[1] - self.screen_height), 0)
 
+  def restart(self): 
+    self.map = pygame.transform.scale(map1, (self.screen_width, self.screen_height))
+    self.turn = 1
 
   def spawn_enemy(self, player):
     monsters = [1,3]
@@ -96,6 +105,10 @@ class Game:
               self.boss.hp -= player.dmg
               if self.boss.hp <= 0:
                  self.running = False 
+                 player.pd = 0
+                 if self.turn == 2:
+                    return 3
+                 return 2
               continue
                  
         for enemy in self.enemy_array:
@@ -114,13 +127,16 @@ class Game:
   def start_boss_fight(self):
      self.enemy_array = []
      self.boss_fight = True
-     self.map = pygame.transform.scale(map1_dark, (self.screen_width, self.screen_height))
-     set_map1_boss_music()
+     if self.turn == 1:
+         self.map = pygame.transform.scale(map1_dark, (self.screen_width, self.screen_height))
+         set_map1_boss_music()
+     else:
+         set_map2_boss_music()
      spawn_boss_thread = threading.Thread(target=self.spawn_boss)
      spawn_boss_thread.start()
 
   def spawn_boss(self):
-     time.sleep(13)
+     time.sleep(2)
      self.boss = Boss(pygame.Vector2(self.screen_width/2 , self.screen_height/2), 'boss1', 600, 600)
      self.bossIsSpawn = True
 

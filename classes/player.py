@@ -40,13 +40,13 @@ class Player:
       self.reload_time = 1.5
     elif name == 'king':
       self.category = 'king'
-      self.speed = 250
-      self.hp = 1
+      self.speed = 400
+      self.hp = 5
       self.max_hp = 1
-      self.dmg = 30
+      self.dmg = 60
       self.max_ammo = 6
       self.ammo = 6
-      self.reload_time = 2
+      self.reload_time = 1
   # Set immortality if player gets hit
   def check_getHit(self, enemy_array, game):
     if self.immortality == True:

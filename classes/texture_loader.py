@@ -33,17 +33,32 @@ shield_dis = pygame.transform.scale(shield_dis, (model_radius * 1.7, model_radiu
 enemy1 = pygame.image.load('textures/enemy1.png')
 enemy1 = pygame.transform.scale(enemy1, (model_radius * 2, model_radius * 2))
 
+enemy1_1 = pygame.image.load('textures/enemy1_1.png')
+enemy1_1 = pygame.transform.scale(enemy1_1, (model_radius * 2, model_radius * 2))
+
 enemy3 = pygame.image.load('textures/enemy3.png')
 enemy3 = pygame.transform.scale(enemy3, (model_radius * 2, model_radius * 2))
+
+enemy3_1 = pygame.image.load('textures/enemy3_1.png')
+enemy3_1 = pygame.transform.scale(enemy3_1, (model_radius * 2, model_radius * 2))
 
 enemy4 = pygame.image.load('textures/enemy4.png')
 enemy4 = pygame.transform.scale(enemy4, (model_radius * 2, model_radius * 2))
 
+enemy4_1 = pygame.image.load('textures/enemy4_1.png')
+enemy4_1 = pygame.transform.scale(enemy4_1, (model_radius * 2, model_radius * 2))
+
 enemy5 = pygame.image.load('textures/enemy5.png')
 enemy5 = pygame.transform.scale(enemy5, (model_radius * 2, model_radius * 2))
 
+enemy5_1 =  pygame.image.load('textures/enemy5_1.png')
+enemy5_1 = pygame.transform.scale(enemy5_1, (model_radius * 2, model_radius * 2))
+
 map1_boss = pygame.image.load('textures/map1_boss.png')
 map1_boss = pygame.transform.scale(map1_boss, (model_radius * 4, model_radius * 4))
+
+map2_boss = pygame.image.load('textures/map2_boss.png')
+map2_boss = pygame.transform.scale(map2_boss, (model_radius * 4, model_radius * 4))
 
 arrow = pygame.image.load('textures/arrow.png')
 arrow = pygame.transform.scale(arrow, (model_radius, model_radius))
@@ -83,6 +98,10 @@ skull = pygame.transform.scale(skull, (100, 100))
 map1 = pygame.image.load('textures/map1.png')
 
 map1_dark = pygame.image.load('textures/map1_dark.png')
+
+map2 = pygame.image.load('textures/map2.png')
+
+victory = pygame.image.load('textures/victory.png')
 
 gif = pygame.image.load('textures/menu.gif')
 
