@@ -20,6 +20,9 @@ class Player:
     self.immortality = False
     self.lock_hit = threading.Lock()
 
+    self.lock_perk = threading.Lock()
+    self.perk_cooldown = False
+
   def set_classes(self, name):
     if name == 'warrior':
       self.category = 'warrior'
@@ -82,40 +85,49 @@ class Player:
       self.immortality = False
 
 
-  # Add a bonus in stats based on perk
   def check_perk(self, perk_array):
     for perk in perk_array:
-      if ((self.position.x >= perk.position.x - 30) and (self.position.x <= perk.position.x  + 70)) and ((self.position.y >= perk.position.y -40) and (self.position.y <= perk.position.y +40)):
-        if perk.type == 1:
-          if self.hp == self.max_hp:
-            return
-          else:
-            self.hp += 1
-            perk_array.remove(perk)
-        elif perk.type == 2:
-          set_speed_boost_thread = threading.Thread(target=self.speed_boost, args=([perk]))
-          set_speed_boost_thread.start()
-          perk_array.remove(perk)
-        elif perk.type == 3:
-          set_reload_boost_thread = threading.Thread(target=self.reload_boost, args=([perk]))
-          set_reload_boost_thread.start()
-          perk_array.remove(perk)
-
+        if ((self.position.x >= perk.position.x - 30) and (self.position.x <= perk.position.x + 70)) and (
+                (self.position.y >= perk.position.y - 40) and (self.position.y <= perk.position.y + 40)):
+            if perk.type == 1:
+                if self.hp == self.max_hp:
+                    return
+                else:
+                    self.hp += 1
+                    perk_array.remove(perk)
+            elif perk.type == 2:
+                set_speed_boost_thread = threading.Thread(target=self.active_perk, args=([perk]))
+                set_speed_boost_thread.start()
+                perk_array.remove(perk)
+            elif perk.type == 3:
+                set_reload_boost_thread = threading.Thread(target=self.active_perk, args=([perk]))
+                set_reload_boost_thread.start()
+                perk_array.remove(perk)
+    
+  def active_perk(self, perk):
+        with self.lock_perk:
+            if perk.type == 2:
+                self.speed_boost(perk)
+            elif perk.type == 3:
+                self.reload_boost(perk)
 
   def reload_boost(self, perk):
-    self.perks.append(perk)
-    self.reload_time = self.reload_time / 2
-    time.sleep(3)
-    self.reload_time = self.reload_time * 2
-    self.perks.remove(perk)
+      self.perks.append(perk)
+      self.reload_time = self.reload_time / 2
+      time.sleep(3)
+      self.reload_time = self.reload_time * 2
+      self.perks.remove(perk)
+
 
   def speed_boost(self, perk):
-    self.perks.append(perk)
-    self.speed = self.speed * 1.3
-    time.sleep(3)
-    self.speed = self.speed / 1.3
-    self.perks.remove(perk)
-        
+      self.perks.append(perk)
+      self.speed = self.speed * 1.3
+      time.sleep(3)
+      self.speed = self.speed / 1.3
+      self.perks.remove(perk)
+
+
+
   def set_immortality(self): 
     self.immortality = True
     time.sleep(1)

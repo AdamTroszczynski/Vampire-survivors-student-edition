@@ -87,7 +87,7 @@ def draw_arrow(arrow_array, screen, player):
             screen.blit(arrow_rotated, screen_arrow_pos)
     
 def draw_enemy(enemy_array, camera_offset, screen, turn):
-     for enemy in enemy_array:
+    for enemy in enemy_array:
             screen_enemy_pos = (int(enemy.position.x + camera_offset.x), int(enemy.position.y + camera_offset.y))
             if enemy.type == 1:
                 if turn == 1:

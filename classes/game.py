@@ -116,7 +116,7 @@ class Game:
                 if enemy.hp <= 0:
                   self.enemy_array.remove(enemy)
                   player.pd += 10
-                  if player.pd >= 20:
+                  if player.pd >= 500:
                     player.pd = -10000
                     self.start_boss_fight()     
                     return 
