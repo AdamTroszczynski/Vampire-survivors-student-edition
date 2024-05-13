@@ -18,6 +18,7 @@ class Player:
     self.pd = 0
     self.is_reload = False
     self.immortality = False
+    self.lock_hit = threading.Lock()
 
   def set_classes(self, name):
     if name == 'warrior':
@@ -47,30 +48,41 @@ class Player:
       self.max_ammo = 6
       self.ammo = 6
       self.reload_time = 1
+
   # Set immortality if player gets hit
   def check_getHit(self, enemy_array, game):
-    if self.immortality == True:
-        return
-    if game.bossIsSpawn:
-        if ((self.position.x >= game.boss.position.x - 20) and (self.position.x <= game.boss.position.x  + 180)) and ((self.position.y >= game.boss.position.y -20) and (self.position.y <= game.boss.position.y +180)):
-          self.hp -= 1
-          if self.hp == 0:
-              game.menu = True
-              game.running = False
-              return
-          set_immortality_thread = threading.Thread(target=self.set_immortality)
-          set_immortality_thread.start()
-    else:
-      for enemy in enemy_array:
-          if ((self.position.x >= enemy.position.x - 40) and (self.position.x <= enemy.position.x  + 40)) and ((self.position.y >= enemy.position.y -40) and (self.position.y <= enemy.position.y +40)):
-              self.hp -= 1
-              if self.hp == 0:
-                game.menu = True
-                game.running = False
-                return
-              set_immortality_thread = threading.Thread(target=self.set_immortality)
-              set_immortality_thread.start()
-              break
+    with self.lock_hit:
+        if self.immortality:
+            return
+
+        if game.bossIsSpawn:
+            boss = game.boss
+            if (boss.position.x - 20 <= self.position.x <= boss.position.x + 180) \
+                    and (boss.position.y - 20 <= self.position.y <= boss.position.y + 180):
+                self.handle_hit(game)
+        else:
+            for enemy in enemy_array:
+                if (enemy.position.x - 40 <= self.position.x <= enemy.position.x + 40) \
+                        and (enemy.position.y - 40 <= self.position.y <= enemy.position.y + 40):
+                    self.handle_hit(game)
+                    break
+
+  def handle_hit(self, game):
+      self.hp -= 1
+      if self.hp == 0:
+          game.menu = True
+          game.running = False
+          self.hp = self.max_hp
+          self.ammo = self.max_ammo
+          return
+      threading.Thread(target=self.set_immortality).start()
+
+  def set_immortality(self): 
+      self.immortality = True
+      time.sleep(1)
+      self.immortality = False
+
+
   # Add a bonus in stats based on perk
   def check_perk(self, perk_array):
     for perk in perk_array:
@@ -107,7 +119,7 @@ class Player:
         
   def set_immortality(self): 
     self.immortality = True
-    time.sleep(3)
+    time.sleep(1)
     self.immortality = False
     
   def reload(self):

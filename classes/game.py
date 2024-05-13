@@ -38,14 +38,14 @@ class Game:
     self.arrow_array = []
     self.perk_array = []
     self.finish = True
-
+    
   # Move camera to player
   def update_camera_offset(self, player):
     self.camera_offset.x = min(max(self.window_size[0] / 2 - player.position.x, self.window_size[0] - self.screen_width), 0)
     self.camera_offset.y = min(max(self.window_size[1] / 2 - player.position.y, self.window_size[1] - self.screen_height), 0)
 
   def restart(self): 
-    self.map = pygame.transform.scale(map1, (self.screen_width, self.screen_height))
+    self.map = 1
     self.turn = 1
 
   def spawn_enemy(self, player):
@@ -118,7 +118,7 @@ class Game:
                 if enemy.hp <= 0:
                   self.enemy_array.remove(enemy)
                   player.pd += 10
-                  if player.pd >= 100:
+                  if player.pd >= 500:
                     player.pd = -10000
                     self.start_boss_fight()
                     return
