@@ -43,8 +43,8 @@ class Player:
       self.category = 'king'
       self.speed = 400
       self.hp = 5
-      self.max_hp = 1
-      self.dmg = 60
+      self.max_hp = 5
+      self.dmg = 600
       self.max_ammo = 6
       self.ammo = 6
       self.reload_time = 1
@@ -54,7 +54,6 @@ class Player:
     with self.lock_hit:
         if self.immortality:
             return
-
         if game.bossIsSpawn:
             boss = game.boss
             if (boss.position.x - 20 <= self.position.x <= boss.position.x + 180) \

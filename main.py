@@ -87,9 +87,10 @@ def main():
                         game.menu = False
 
             if game.menu == True:
+                game.restart()
                 draw_menu(game.screen, game.menu_map, game.camera_offset, player)
                 pygame.display.flip()
-                    
+        
 
         while game.running:
             if music_play == False:

@@ -22,11 +22,11 @@ class Game:
     self.camera_offset = pygame.Vector2(0, 0)
     self.clock = pygame.time.Clock()
     if map == 1:
-       self.map = pygame.transform.scale(map1, (self.screen_width, self.screen_height))
-       self.turn = 1
+      self.map = pygame.transform.scale(map1, (self.screen_width, self.screen_height))
+      self.turn = 1
     else:
-       self.map = pygame.transform.scale(map2, (self.screen_width, self.screen_height))
-       self.turn = 2
+      self.map = pygame.transform.scale(map2, (self.screen_width, self.screen_height))
+      self.turn = 2
     self.menu_map = pygame.transform.scale(gif, (self.screen_width / 1.5, self.screen_height /1.5))
     self.running = True
     self.isVictory = False
@@ -45,7 +45,7 @@ class Game:
     self.camera_offset.y = min(max(self.window_size[1] / 2 - player.position.y, self.window_size[1] - self.screen_height), 0)
 
   def restart(self): 
-    self.map = 1
+    self.map = pygame.transform.scale(map1, (self.screen_width, self.screen_height))
     self.turn = 1
 
   def spawn_enemy(self, player):
@@ -63,12 +63,12 @@ class Game:
         time.sleep(0.5)
 
   def spawn_perk(self):
-     perks = [1,2,3]
-     chanses = [0.4, 0.4, 0.2]
-     while self.running:
+    perks = [1,2,3]
+    chanses = [0.4, 0.4, 0.2]
+    while self.running:
         if len(self.perk_array) > 5:
-           time.sleep(5)
-           continue
+          time.sleep(5)
+          continue
         x = random.randint(40, self.screen_width - 40)
         y = random.randint(40, self.screen_height - 40)
         perk_type = random.choices(perks, weights = chanses)[0]
@@ -100,17 +100,15 @@ class Game:
   def check_hit(self, player):
     for arrow in self.arrow_array:
         if self.bossIsSpawn:
-           if ((arrow.position.x >= self.boss.position.x + self.camera_offset.x - 20) and (arrow.position.x <= self.boss.position.x+ self.camera_offset.x + 180)) and ((arrow.position.y >= self.boss.position.y+ self.camera_offset.y -20) and (arrow.position.y <= self.boss.position.y+ self.camera_offset.y +180)):
+          if ((arrow.position.x >= self.boss.position.x + self.camera_offset.x - 20) and (arrow.position.x <= self.boss.position.x+ self.camera_offset.x + 180)) and ((arrow.position.y >= self.boss.position.y+ self.camera_offset.y -20) and (arrow.position.y <= self.boss.position.y+ self.camera_offset.y +180)):
               self.arrow_array.remove(arrow)
               self.boss.hp -= player.dmg
               if self.boss.hp <= 0:
-                 self.running = False 
-                 player.pd = 0
-                 if self.turn == 2:
+                self.running = False 
+                player.pd = 0     
+                if self.turn == 2:
                     return 3
-                 return 2
-              continue
-                 
+                return 2
         for enemy in self.enemy_array:
             if ((arrow.position.x >= enemy.position.x + self.camera_offset.x - 40) and (arrow.position.x <= enemy.position.x+ self.camera_offset.x + 40)) and ((arrow.position.y >= enemy.position.y+ self.camera_offset.y -40) and (arrow.position.y <= enemy.position.y+ self.camera_offset.y +40)):
                 self.arrow_array.remove(arrow)
@@ -118,25 +116,25 @@ class Game:
                 if enemy.hp <= 0:
                   self.enemy_array.remove(enemy)
                   player.pd += 10
-                  if player.pd >= 500:
+                  if player.pd >= 20:
                     player.pd = -10000
-                    self.start_boss_fight()
-                    return
+                    self.start_boss_fight()     
+                    return 
                 break
             
   def start_boss_fight(self):
-     self.enemy_array = []
-     self.boss_fight = True
-     if self.turn == 1:
-         self.map = pygame.transform.scale(map1_dark, (self.screen_width, self.screen_height))
-         set_map1_boss_music()
-     else:
-         set_map2_boss_music()
-     spawn_boss_thread = threading.Thread(target=self.spawn_boss)
-     spawn_boss_thread.start()
+    self.enemy_array = []
+    self.boss_fight = True
+    if self.turn == 1:
+        self.map = pygame.transform.scale(map1_dark, (self.screen_width, self.screen_height))
+        set_map1_boss_music()
+    else:
+        set_map2_boss_music()
+    spawn_boss_thread = threading.Thread(target=self.spawn_boss)
+    spawn_boss_thread.start()
 
   def spawn_boss(self):
-     time.sleep(2)
-     self.boss = Boss(pygame.Vector2(self.screen_width/2 , self.screen_height/2), 'boss1', 600, 600)
-     self.bossIsSpawn = True
+    time.sleep(2)
+    self.boss = Boss(pygame.Vector2(self.screen_width/2 , self.screen_height/2), 'boss1', 600, 600)
+    self.bossIsSpawn = True
 
