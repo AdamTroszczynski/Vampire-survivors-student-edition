@@ -104,7 +104,7 @@ class Game:
             arrow.position += arrow.direction * 200 * self.dt
             if not (-2000 <= arrow.position.x <= 2000 and -2000 <= arrow.position.y <= 2000):
                 self.arrow_array.remove(arrow)
-
+# critical 3
     def move_bullets(self):
         with self.bullets_lock:
             for bullet in self.enemy_bullets[:]:
@@ -154,7 +154,7 @@ class Game:
         if enemy.take_damage(player.dmg):
             self.enemy_array.remove(enemy)
             player.pd += 10
-            if player.pd >= 10:
+            if player.pd >= 500:
                 player.pd = -10000
                 self.start_boss_fight()
 

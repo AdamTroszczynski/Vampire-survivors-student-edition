@@ -48,7 +48,7 @@ class Enemy:
             self.speed = 100
             self.hp = 30
         elif self.type == 4:
-            self.speed = 200
+            self.speed = 300
             self.hp = 30
         elif self.type == 5:
             self.speed = 250
