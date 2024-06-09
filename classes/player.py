@@ -4,139 +4,124 @@ import time
 from classes.texture_loader import knight, knight_hit
 
 class Player:
-  def __init__(self, position):
-    self.position = position
-    self.category = 'warrior'
-    self.speed = 300
-    self.max_hp = 5
-    self.hp = 5
-    self.dmg = 10
-    self.max_ammo = 2
-    self.ammo = 2
-    self.reload_time = 1
-    self.perks = []
-    self.pd = 0
-    self.is_reload = False
-    self.immortality = False
-    self.lock_hit = threading.Lock()
+    def __init__(self, position):
+        self.position = position
+        self.set_classes('warrior') 
+        self.immortality = False
+        self.is_reload = False
+        self.perk_cooldown = False
+        self.perks = []
+        self.lock_hit = threading.Lock()
+        self.lock_perk = threading.Lock()
+        self.pd = 0
 
-    self.lock_perk = threading.Lock()
-    self.perk_cooldown = False
+    def set_classes(self, name):
+        classes = {
+            'warrior': {'speed': 300, 'hp': 5, 'dmg': 10, 'ammo': 2, 'reload_time': 1},
+            'wizard': {'speed': 400, 'hp': 3, 'dmg': 20, 'ammo': 3, 'reload_time': 1.5},
+            'king': {'speed': 400, 'hp': 5, 'dmg': 600, 'ammo': 6, 'reload_time': 1}
+        }
+        
+        if name in classes:
+            self.category = name
+            attributes = classes[name]
+            self.speed = attributes['speed']
+            self.hp = self.max_hp = attributes['hp']
+            self.dmg = attributes['dmg']
+            self.ammo = self.max_ammo = attributes['ammo']
+            self.reload_time = attributes['reload_time']
 
-  def set_classes(self, name):
-    if name == 'warrior':
-      self.category = 'warrior'
-      self.speed = 300
-      self.max_hp = 5
-      self.hp = 5
-      self.dmg = 10
-      self.max_ammo = 2
-      self.ammo = 2
-      self.reload_time = 1
-    elif name == 'wizard':
-      self.category = 'wizard'
-      self.speed = 400
-      self.hp = 3
-      self.max_hp = 3
-      self.dmg = 20
-      self.max_ammo = 3
-      self.ammo = 3
-      self.reload_time = 1.5
-    elif name == 'king':
-      self.category = 'king'
-      self.speed = 400
-      self.hp = 5
-      self.max_hp = 5
-      self.dmg = 600
-      self.max_ammo = 6
-      self.ammo = 6
-      self.reload_time = 1
+# critical 1
+    def check_getHit(self, enemy_array, game):
+        with self.lock_hit:
+            if self.immortality:
+                return
+            
+            if game.bossIsSpawn:
+                self.check_collision_with_boss(game)
+            else:
+                self.check_collision_with_enemies(enemy_array, game)
 
-  # Set immortality if player gets hit
-  def check_getHit(self, enemy_array, game):
-    with self.lock_hit:
-        if self.immortality:
-            return
-        if game.bossIsSpawn:
-            boss = game.boss
-            if (boss.position.x - 20 <= self.position.x <= boss.position.x + 180) \
-                    and (boss.position.y - 20 <= self.position.y <= boss.position.y + 180):
+    def check_collision_with_boss(self, game):
+        boss = game.boss
+        if (boss.position.x - 20 <= self.position.x <= boss.position.x + 180) and \
+           (boss.position.y - 20 <= self.position.y <= boss.position.y + 180):
+            self.handle_hit(game)
+
+    def check_collision_with_enemies(self, enemy_array, game):
+        for enemy in enemy_array:
+            if (enemy.position.x - 40 <= self.position.x <= enemy.position.x + 40) and \
+               (enemy.position.y - 40 <= self.position.y <= enemy.position.y + 40):
                 self.handle_hit(game)
+                break
+
+    def handle_hit(self, game):
+        self.hp -= 1
+        if self.hp == 0:
+            game.menu = True
+            game.running = False
+            self.reset_player()
         else:
-            for enemy in enemy_array:
-                if (enemy.position.x - 40 <= self.position.x <= enemy.position.x + 40) \
-                        and (enemy.position.y - 40 <= self.position.y <= enemy.position.y + 40):
-                    self.handle_hit(game)
-                    break
+            threading.Thread(target=self.set_immortality).start()
 
-  def handle_hit(self, game):
-      self.hp -= 1
-      if self.hp == 0:
-          game.menu = True
-          game.running = False
-          self.hp = self.max_hp
-          self.ammo = self.max_ammo
-          return
-      threading.Thread(target=self.set_immortality).start()
+    def reset_player(self):
+        self.hp = self.max_hp
+        self.ammo = self.max_ammo
 
-  def set_immortality(self): 
-      self.immortality = True
-      time.sleep(1)
-      self.immortality = False
+    def set_immortality(self):
+        self.immortality = True
+        time.sleep(1)
+        self.immortality = False
 
+    def check_perk(self, perk_array):
+        for perk in perk_array:
+            if self.is_colliding_with_perk(perk):
+                self.apply_perk(perk, perk_array)
 
-  def check_perk(self, perk_array):
-    for perk in perk_array:
-        if ((self.position.x >= perk.position.x - 30) and (self.position.x <= perk.position.x + 70)) and (
-                (self.position.y >= perk.position.y - 40) and (self.position.y <= perk.position.y + 40)):
-            if perk.type == 1:
-                if self.hp == self.max_hp:
-                    return
-                else:
-                    self.hp += 1
-                    perk_array.remove(perk)
-            elif perk.type == 2:
-                set_speed_boost_thread = threading.Thread(target=self.active_perk, args=([perk]))
-                set_speed_boost_thread.start()
-                perk_array.remove(perk)
-            elif perk.type == 3:
-                set_reload_boost_thread = threading.Thread(target=self.active_perk, args=([perk]))
-                set_reload_boost_thread.start()
-                perk_array.remove(perk)
-    
-  def active_perk(self, perk):
+    def is_colliding_with_perk(self, perk):
+        return ((self.position.x >= perk.position.x - 30) and (self.position.x <= perk.position.x + 70)) and \
+               ((self.position.y >= perk.position.y - 40) and (self.position.y <= perk.position.y + 40))
+
+    def apply_perk(self, perk, perk_array):
+        if perk.type == 1:
+            self.apply_health_perk(perk, perk_array)
+        elif perk.type in (2, 3):
+            self.apply_boost_perk(perk)
+            perk_array.remove(perk)
+
+    def apply_health_perk(self, perk, perk_array):
+        if self.hp < self.max_hp:
+            self.hp += 1
+            perk_array.remove(perk)
+
+    def apply_boost_perk(self, perk):
+        boost_thread = threading.Thread(target=self.activate_perk, args=(perk,))
+        boost_thread.start()
+
+# critical 2 
+    def activate_perk(self, perk):
         with self.lock_perk:
             if perk.type == 2:
                 self.speed_boost(perk)
             elif perk.type == 3:
                 self.reload_boost(perk)
 
-  def reload_boost(self, perk):
-      self.perks.append(perk)
-      self.reload_time = self.reload_time / 2
-      time.sleep(3)
-      self.reload_time = self.reload_time * 2
-      self.perks.remove(perk)
+    def speed_boost(self, perk):
+        self.perks.append(perk)
+        self.speed *= 1.3
+        time.sleep(3)
+        self.speed /= 1.3
+        self.perks.remove(perk)
 
+    def reload_boost(self, perk):
+        self.perks.append(perk)
+        self.reload_time /= 2
+        time.sleep(3)
+        self.reload_time *= 2
+        self.perks.remove(perk)
 
-  def speed_boost(self, perk):
-      self.perks.append(perk)
-      self.speed = self.speed * 1.3
-      time.sleep(3)
-      self.speed = self.speed / 1.3
-      self.perks.remove(perk)
-
-
-
-  def set_immortality(self): 
-    self.immortality = True
-    time.sleep(1)
-    self.immortality = False
-    
-  def reload(self):
-    self.is_reload = True
-    time.sleep(self.reload_time)
-    self.ammo = self.max_ammo
-    self.is_reload = False
-  
- 
+    def reload(self):
+        self.is_reload = True
+        time.sleep(self.reload_time)
+        self.ammo = self.max_ammo
+        self.is_reload = False
