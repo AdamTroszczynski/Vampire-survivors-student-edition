@@ -18,7 +18,7 @@ class Boss:
         self.spawn_arrow = False
         self.ready = True
 
-  # Attack that moves Boss to player
+    # Attack that moves Boss to player
     def attack(self, player, game):
         self.speed = 1300
         if self.player_pos is None:
@@ -29,14 +29,14 @@ class Boss:
             self.player_pos = None
             threading.Thread(target=self.wait, args=(1,)).start()
 
-  # Special attack that generates additional enemies
+    # Special attack that generates additional enemies
     def attack2(self, game, enemy_array, screen_width, screen_height):
         self.speed = 600
         center_screen = pygame.Vector2(screen_width / 2, screen_height / 2)
         direction = (center_screen - self.position).normalize() * self.speed * game.dt
         self.position += direction
         if self._is_at_center(center_screen):
-            self._spawn_enemies(enemy_array, screen_width, screen_height)
+            self._spawn_enemies(game, enemy_array, screen_width, screen_height)
             self.turn += 1
             threading.Thread(target=self.wait, args=(1,)).start()
 
@@ -48,12 +48,12 @@ class Boss:
         return (center.x - 50 <= self.position.x <= center.x + 50 and
                 center.y - 50 <= self.position.y <= center.y + 50)
 
-    def _spawn_enemies(self, enemy_array, screen_width, screen_height):
+    def _spawn_enemies(self, game, enemy_array, screen_width, screen_height):
         enemy_type = 4 if random.random() > 0.5 else 5
         for _ in range(4 * self.turn):
             x = random.randint(int(screen_width / 2 - 300 * self.turn / 3), int(screen_width / 2 + 300 * self.turn / 3))
             y = random.randint(int(screen_height / 2 - 300 * self.turn / 3), int(screen_height / 2 + 300 * self.turn / 3))
-            enemy_array.append(Enemy(pygame.Vector2(x, y), enemy_type))
+            enemy_array.append(Enemy(pygame.Vector2(x, y), enemy_type, game))
 
     def wait(self, time_s):
         self.ready = False

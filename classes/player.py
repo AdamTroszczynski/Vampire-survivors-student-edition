@@ -31,7 +31,6 @@ class Player:
             self.ammo = self.max_ammo = attributes['ammo']
             self.reload_time = attributes['reload_time']
 
-# critical 1
     def check_getHit(self, enemy_array, game):
         with self.lock_hit:
             if self.immortality:
@@ -56,6 +55,8 @@ class Player:
                 break
 
     def handle_hit(self, game):
+        if self.immortality:
+            return
         self.hp -= 1
         if self.hp == 0:
             game.menu = True
@@ -98,7 +99,6 @@ class Player:
         boost_thread = threading.Thread(target=self.activate_perk, args=(perk,))
         boost_thread.start()
 
-# critical 2 
     def activate_perk(self, perk):
         with self.lock_perk:
             if perk.type == 2:

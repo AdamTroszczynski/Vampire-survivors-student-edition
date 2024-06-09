@@ -21,15 +21,15 @@ player = 0
 def main():
     global exit, music_play, map
     set_menu_music()
-    while exit == False:
-        game = Game(2560, 1440, (1600,900), map)
+    while not exit:
+        game = Game(2560, 1440, (1600, 900), map)
         if map == 1:
             player = Player(pygame.Vector2(game.screen_width / 2, game.screen_height / 2))
         game.isSpawn = False
         music_play = False
         if map == 3:
             while game.finish:
-                if music_play == False:
+                if not music_play:
                     set_outro_music()
                     music_play = True
 
@@ -41,7 +41,7 @@ def main():
                         game.menu = False
                         exit = True
                         break
-                    elif event.type == pygame.MOUSEBUTTONDOWN: # Mouse interaction
+                    elif event.type == pygame.MOUSEBUTTONDOWN:  # Mouse interaction
                         mouse_pos = pygame.mouse.get_pos()
                         if pygame.Rect(500, 700, 200, 50).collidepoint(mouse_pos):
                             game.finish = False
@@ -60,7 +60,7 @@ def main():
         while game.menu:
             if map == 2:
                 break
-            if music_play == False:
+            if not music_play:
                 set_menu_music()
                 music_play = True
             for event in pygame.event.get():
@@ -69,7 +69,7 @@ def main():
                     exit = True
                     game.menu = False
                     break
-                elif event.type == pygame.MOUSEBUTTONDOWN: # Mouse interaction
+                elif event.type == pygame.MOUSEBUTTONDOWN:  # Mouse interaction
                     mouse_pos = pygame.mouse.get_pos()
                     if pygame.Rect(700, 100, 200, 50).collidepoint(mouse_pos):
                         game.menu = False
@@ -86,25 +86,24 @@ def main():
                         music_play = False
                         game.menu = False
 
-            if game.menu == True:
+            if game.menu:
                 game.restart()
                 draw_menu(game.screen, game.menu_map, game.camera_offset, player)
                 pygame.display.flip()
-        
 
         while game.running:
-            if music_play == False:
+            if not music_play:
                 if map == 1:
                     set_map1_music()
                     music_play = True
                 else:
                     set_map2_music()
                     music_play = True
-            if game.isSpawn == False:
-                spawn_enemy_thread = threading.Thread(target=game.spawn_enemy, args=([player]))
+            if not game.isSpawn:
+                spawn_enemy_thread = threading.Thread(target=game.spawn_enemy, args=(player,))
                 spawn_enemy_thread.start()
-                spawn_enemy_thread = threading.Thread(target=game.spawn_perk)
-                spawn_enemy_thread.start()
+                spawn_perk_thread = threading.Thread(target=game.spawn_perk)
+                spawn_perk_thread.start()
                 game.isSpawn = True
 
             for event in pygame.event.get():
@@ -112,10 +111,10 @@ def main():
                     exit = True
                     game.running = False
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if player.ammo == 0 or player.is_reload == True:
+                    if player.ammo == 0 or player.is_reload:
                         break
                     player.ammo -= 1
-                    spawn_shoot_thread = threading.Thread(target=game.spawn_arrow, args=([player]))
+                    spawn_shoot_thread = threading.Thread(target=game.spawn_arrow, args=(player,))
                     spawn_shoot_thread.start()
                     draw_ammo(player, game.screen, game.window_size)
                     if player.ammo == 0:
@@ -142,20 +141,21 @@ def main():
 
             game.update_camera_offset(player)
 
-            draw_screen(game.screen,game.camera_offset,game.map)
+            draw_screen(game.screen, game.camera_offset, game.map)
             draw_shields(player, game.screen)
             draw_ammo(player, game.screen, game.window_size)
-            game.move_enemies(player)  
+            game.move_enemies(player)
 
             player.check_getHit(game.enemy_array, game)
-            if game.running == False:
+            if not game.running:
                 music_play = False
                 break
             player.check_perk(game.perk_array)
             draw_used_perk(game.screen, game.window_size, player)
             game.move_arrow()
+            game.move_bullets()  # Ensure bullets are moved and checked for collisions
             map = game.check_hit(player)
-                
+
             draw_shields(player, game.screen)
             draw_enemy(game.enemy_array, game.camera_offset, game.screen, game.turn)
             draw_perk(game.perk_array, game.camera_offset, game.screen, player)
@@ -166,11 +166,13 @@ def main():
                 draw_boss(game.boss, game.camera_offset, game.screen, game.turn)
                 if game.boss.ready:
                     if game.boss.rush < 6:
-                        game.boss.attack(player,game)
+                        game.boss.attack(player, game)
                     else:
-                        game.boss.attack2(game,game.enemy_array,game.screen_width, game.screen_height)
-                        
+                        game.boss.attack2(game, game.enemy_array, game.screen_width, game.screen_height)
 
+            # Render bullets
+            for bullet in game.enemy_bullets:
+                pygame.draw.circle(game.screen, (255, 0, 255), (int(bullet.position.x + game.camera_offset.x), int(bullet.position.y + game.camera_offset.y)), bullet.radius)
 
             # Update the display
             pygame.display.flip()

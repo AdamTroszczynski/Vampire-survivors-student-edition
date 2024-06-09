@@ -3,7 +3,7 @@ import random
 import math
 import threading
 import time
-from classes.enemy import Enemy
+from classes.enemy import Enemy, Bullet
 from classes.arrow import Arrow
 from classes.perk import Perk
 from classes.boss import Boss
@@ -33,6 +33,8 @@ class Game:
         self.arrow_array = []
         self.perk_array = []
         self.finish = True
+        self.enemy_bullets = []
+        self.player = None
 
     def _load_map(self, map):
         if map == 1:
@@ -51,6 +53,7 @@ class Game:
         self.turn = 1
 
     def spawn_enemy(self, player):
+        self.player = player
         monsters = [1, 3]
         chances = [0.4, 0.2]
         while self.running and not self.boss_fight:
@@ -59,7 +62,7 @@ class Game:
                 continue
             x, y = self._get_random_position(player, 30)
             enemy_type = random.choices(monsters, weights=chances)[0]
-            self.enemy_array.append(Enemy(pygame.Vector2(x, y), enemy_type))
+            self.enemy_array.append(Enemy(pygame.Vector2(x, y), enemy_type, self))
             time.sleep(0.5)
 
     def spawn_perk(self):
@@ -83,8 +86,7 @@ class Game:
 
     def move_enemies(self, player):
         for enemy in self.enemy_array:
-            direction = ((player.position - pygame.Vector2(30, 30)) - enemy.position).normalize() * enemy.speed * self.dt
-            enemy.position += direction
+            enemy.move_towards_player(player, self.dt)
 
     def spawn_arrow(self, player):
         if player.is_reload:
@@ -101,6 +103,25 @@ class Game:
             arrow.position += arrow.direction * 200 * self.dt
             if not (-2000 <= arrow.position.x <= 2000 and -2000 <= arrow.position.y <= 2000):
                 self.arrow_array.remove(arrow)
+
+    def move_bullets(self):
+        for bullet in self.enemy_bullets[:]:
+            bullet.move(self.dt)
+            if bullet.check_collision(self.player):
+                self.player.handle_hit(self)
+                self.enemy_bullets.remove(bullet)
+            elif not (0 <= bullet.position.x <= self.screen_width and 0 <= bullet.position.y <= self.screen_height):
+                self.enemy_bullets.remove(bullet)
+
+    def render(self):
+        self.screen.blit(self.map, self.camera_offset)
+        for enemy in self.enemy_array:
+            pygame.draw.circle(self.screen, (255, 0, 0), (int(enemy.position.x + self.camera_offset.x), int(enemy.position.y + self.camera_offset.y)), 15)
+        for arrow in self.arrow_array:
+            pygame.draw.line(self.screen, (0, 255, 0), (arrow.position.x + self.camera_offset.x, arrow.position.y + self.camera_offset.y), (arrow.position.x + arrow.direction.x * 10 + self.camera_offset.x, arrow.position.y + arrow.direction.y * 10 + self.camera_offset.y), 3)
+        for bullet in self.enemy_bullets:
+            bullet.render(self.screen, self.camera_offset)
+        pygame.display.flip()
 
     def check_hit(self, player):
         for arrow in self.arrow_array[:]:
@@ -131,11 +152,13 @@ class Game:
         if enemy.take_damage(player.dmg):
             self.enemy_array.remove(enemy)
             player.pd += 10
-            if player.pd >= 500:
+            if player.pd >= 20:
                 player.pd = -10000
                 self.start_boss_fight()
 
     def start_boss_fight(self):
+        for enemy in self.enemy_array:
+            enemy.alive = False
         self.enemy_array = []
         self.boss_fight = True
         self.map = pygame.transform.scale(map1_dark if self.turn == 1 else map2, (self.screen_width, self.screen_height))
@@ -146,3 +169,13 @@ class Game:
         time.sleep(2)
         self.boss = Boss(pygame.Vector2(self.screen_width / 2, self.screen_height / 2), 'boss1', 600, 600)
         self.bossIsSpawn = True
+
+    def game_loop(self):
+        while self.running:
+            self.dt = self.clock.tick(60) / 1000
+            self.move_enemies(self.player)
+            self.move_arrow()
+            self.move_bullets()
+            self.check_hit(self.player)
+            self.update_camera_offset(self.player)
+            self.render()
