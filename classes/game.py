@@ -128,10 +128,8 @@ class Game:
     def _handle_enemy_hit(self, arrow, enemy, player):
         if arrow in self.arrow_array:
             self.arrow_array.remove(arrow)
-        enemy.hp -= player.dmg
-        if enemy.hp <= 0:
-            if enemy in self.enemy_array:
-                self.enemy_array.remove(enemy)
+        if enemy.take_damage(player.dmg):
+            self.enemy_array.remove(enemy)
             player.pd += 10
             if player.pd >= 500:
                 player.pd = -10000
