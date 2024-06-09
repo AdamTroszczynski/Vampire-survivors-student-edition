@@ -35,6 +35,7 @@ class Game:
         self.finish = True
         self.enemy_bullets = []
         self.player = None
+        self.bullets_lock = threading.Lock()
 
     def _load_map(self, map):
         if map == 1:
@@ -105,13 +106,14 @@ class Game:
                 self.arrow_array.remove(arrow)
 
     def move_bullets(self):
-        for bullet in self.enemy_bullets[:]:
-            bullet.move(self.dt)
-            if bullet.check_collision(self.player):
-                self.player.handle_hit(self)
-                self.enemy_bullets.remove(bullet)
-            elif not (0 <= bullet.position.x <= self.screen_width and 0 <= bullet.position.y <= self.screen_height):
-                self.enemy_bullets.remove(bullet)
+        with self.bullets_lock:
+            for bullet in self.enemy_bullets[:]:
+                bullet.move(self.dt)
+                if bullet.check_collision(self.player):
+                    self.player.handle_hit(self)
+                    self.enemy_bullets.remove(bullet)
+                elif not (0 <= bullet.position.x <= self.screen_width and 0 <= bullet.position.y <= self.screen_height):
+                    self.enemy_bullets.remove(bullet)
 
     def render(self):
         self.screen.blit(self.map, self.camera_offset)
@@ -152,7 +154,7 @@ class Game:
         if enemy.take_damage(player.dmg):
             self.enemy_array.remove(enemy)
             player.pd += 10
-            if player.pd >= 20:
+            if player.pd >= 10:
                 player.pd = -10000
                 self.start_boss_fight()
 
@@ -169,13 +171,3 @@ class Game:
         time.sleep(2)
         self.boss = Boss(pygame.Vector2(self.screen_width / 2, self.screen_height / 2), 'boss1', 600, 600)
         self.bossIsSpawn = True
-
-    def game_loop(self):
-        while self.running:
-            self.dt = self.clock.tick(60) / 1000
-            self.move_enemies(self.player)
-            self.move_arrow()
-            self.move_bullets()
-            self.check_hit(self.player)
-            self.update_camera_offset(self.player)
-            self.render()

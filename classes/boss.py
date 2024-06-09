@@ -49,7 +49,7 @@ class Boss:
                 center.y - 50 <= self.position.y <= center.y + 50)
 
     def _spawn_enemies(self, game, enemy_array, screen_width, screen_height):
-        enemy_type = 4 if random.random() > 0.5 else 5
+        enemy_type = 1 if random.random() > 0.5 else 3
         for _ in range(4 * self.turn):
             x = random.randint(int(screen_width / 2 - 300 * self.turn / 3), int(screen_width / 2 + 300 * self.turn / 3))
             y = random.randint(int(screen_height / 2 - 300 * self.turn / 3), int(screen_height / 2 + 300 * self.turn / 3))

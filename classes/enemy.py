@@ -1,6 +1,7 @@
 import pygame
 import threading
 import time
+import random
 
 class Bullet:
     def __init__(self, position, direction, speed=1000, radius=20):
@@ -14,7 +15,7 @@ class Bullet:
 
     def check_collision(self, player):
         if player.immortality:
-            return False  # Return False if the player is immortal
+            return False  
         if (player.position.x - self.radius <= self.position.x <= player.position.x + self.radius) and \
            (player.position.y - self.radius <= self.position.y <= player.position.y + self.radius):
             return True
@@ -66,9 +67,11 @@ class Enemy:
 
     def shoot_player(self):
         while self.game.running and self.alive and self.game.turn == 2:
-            time.sleep(4)
+            time.sleep(2)
             if not self.game.running or not self.alive:
                 break
-            direction = (self.game.player.position - self.position).normalize()
+            target_position = self.game.player.position + pygame.Vector2(random.uniform(-250, 250), random.uniform(-250, 250))
+            direction = (target_position - self.position).normalize()
             bullet = Bullet(self.position.copy(), direction, speed=1000, radius=20)
-            self.game.enemy_bullets.append(bullet)
+            with self.game.bullets_lock:
+              self.game.enemy_bullets.append(bullet)

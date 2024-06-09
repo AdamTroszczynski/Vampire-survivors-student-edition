@@ -17,7 +17,7 @@ class Player:
 
     def set_classes(self, name):
         classes = {
-            'warrior': {'speed': 300, 'hp': 5, 'dmg': 10, 'ammo': 2, 'reload_time': 1},
+            'warrior': {'speed': 300, 'hp': 5, 'dmg': 15, 'ammo': 2, 'reload_time': 1},
             'wizard': {'speed': 400, 'hp': 3, 'dmg': 20, 'ammo': 3, 'reload_time': 1.5},
             'king': {'speed': 400, 'hp': 5, 'dmg': 600, 'ammo': 6, 'reload_time': 1}
         }
@@ -31,6 +31,7 @@ class Player:
             self.ammo = self.max_ammo = attributes['ammo']
             self.reload_time = attributes['reload_time']
 
+# critical 1
     def check_getHit(self, enemy_array, game):
         with self.lock_hit:
             if self.immortality:
@@ -55,8 +56,6 @@ class Player:
                 break
 
     def handle_hit(self, game):
-        if self.immortality:
-            return
         self.hp -= 1
         if self.hp == 0:
             game.menu = True
@@ -99,6 +98,7 @@ class Player:
         boost_thread = threading.Thread(target=self.activate_perk, args=(perk,))
         boost_thread.start()
 
+# critical 2 
     def activate_perk(self, perk):
         with self.lock_perk:
             if perk.type == 2:
