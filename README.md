@@ -4,12 +4,18 @@
 
 ## Opis projektu
 
-**Vampire Survivors: Student Edition** to prosta gra oparta na mechanice znanej z gier typu "vampire survivors". Gracz ma możliwość wyboru postaci spośród różnych dostępnych opcji oraz eksplorowania dwóch różnych map, starając się przetrwać ataki dwóch bossów i siedmiu różnych przeciwników. Dodatkowo, gracz może zdobywać i wykorzystywać różne umiejętności (perki), takie jak zwiększenie życia czy szybkości poruszania się.
+**Vampire Survivors: Student Edition** to prosta gra oparta na mechanice z gry "vampire survivors". Gracz ma możliwość wyboru postaci spośród różnych dostępnych opcji oraz eksplorowania dwóch różnych map, starając się przetrwać ataki bossów i różnych przeciwników. Dodatkowo, gracz może zdobywać i wykorzystywać różne umiejętności (perki), takie jak zwiększenie życia czy szybkości poruszania się.
 
 ## GamePlay
 
 ![Pierwsza mapa](/photoToReadme/map_1.png)
-![Druga mapa](/photoToReadme/map_2.png)
+
+## Sterowanie
+**Poruszanie się** - W, A, S i D
+
+**Strzelanie** - Dowolny przycisk myszki
+
+**Przeładowanie** - R
 
 ## Wątki i ich znaczenie
 
