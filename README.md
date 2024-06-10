@@ -1,6 +1,6 @@
 # Vampire Survivors: Student Edition
 
-![Vampire Survivors: Student Edition](/photoToReadme/menu.png)
+![Vampire Survivors: Student Edition](/photoToReadme/mainMenu.png)
 
 ## Opis projektu
 
@@ -8,8 +8,8 @@
 
 ## GamePlay
 
-![Pierwsza mapa](/photoToReadme/map1.png)
-![Druga mapa](/photoToReadme/map2.png)
+![Pierwsza mapa](/photoToReadme/map_1.png)
+![Druga mapa](/photoToReadme/map_2.png)
 
 ## Wątki i ich znaczenie
 
