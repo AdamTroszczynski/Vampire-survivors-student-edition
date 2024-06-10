@@ -4,7 +4,7 @@ import time
 import random
 
 class Bullet:
-    def __init__(self, position, direction, speed=1000, radius=20):
+    def __init__(self, position, direction, speed=900, radius=20):
         self.position = position
         self.direction = direction
         self.speed = speed
@@ -67,7 +67,7 @@ class Enemy:
 
     def shoot_player(self):
         while self.game.running and self.alive and self.game.turn == 2:
-            time.sleep(2)
+            time.sleep(5)
             if not self.game.running or not self.alive:
                 break
             target_position = self.game.player.position + pygame.Vector2(random.uniform(-250, 250), random.uniform(-250, 250))
