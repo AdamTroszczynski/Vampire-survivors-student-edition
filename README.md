@@ -6,6 +6,10 @@
 
 **Vampire Survivors: Student Edition** to prosta gra oparta na mechanice z gry "vampire survivors". Gracz ma możliwość wyboru postaci spośród różnych dostępnych opcji oraz eksplorowania dwóch różnych map, starając się przetrwać ataki bossów i różnych przeciwników. Dodatkowo, gracz może zdobywać i wykorzystywać różne umiejętności (perki), takie jak zwiększenie życia czy szybkości poruszania się.
 
+## Uruchomienie
+
+Wymagana biblioteka pygame. Uruchamiamy przy pomocy python main.py
+
 ## GamePlay
 
 ![Pierwsza mapa](/photoToReadme/map_1.png)
