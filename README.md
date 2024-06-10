@@ -9,6 +9,7 @@
 ## GamePlay
 
 ![Pierwsza mapa](/photoToReadme/map_1.png)
+![Druga mapa](/photoToReadme/map_2.png)
 
 ## Sterowanie
 **Poruszanie się** - W, A, S i D
