@@ -29,5 +29,5 @@ def set_map2_boss_music():
 
 def set_outro_music():
   pygame.mixer.music.stop()
-  pygame.mixer.music.set_volume(2)
+  pygame.mixer.music.set_volume(0.5)
   pygame.mixer.music.play()
