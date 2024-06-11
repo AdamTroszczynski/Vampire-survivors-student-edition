@@ -19,7 +19,7 @@ class Player:
         classes = {
             'warrior': {'speed': 300, 'hp': 5, 'dmg': 15, 'ammo': 2, 'reload_time': 1},
             'wizard': {'speed': 400, 'hp': 3, 'dmg': 20, 'ammo': 3, 'reload_time': 1.5},
-            'king': {'speed': 400, 'hp': 5, 'dmg': 600, 'ammo': 6, 'reload_time': 1}
+            'king': {'speed': 400, 'hp': 2, 'dmg': 35, 'ammo': 5, 'reload_time': 1}
         }
         
         if name in classes:
