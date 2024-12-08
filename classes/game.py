@@ -154,7 +154,7 @@ class Game:
         if enemy.take_damage(player.dmg):
             self.enemy_array.remove(enemy)
             player.pd += 10
-            if player.pd >= 10:
+            if player.pd >= 500:
                 player.pd = -10000
                 self.start_boss_fight()
 
@@ -169,5 +169,5 @@ class Game:
 
     def spawn_boss(self):
         time.sleep(2)
-        self.boss = Boss(pygame.Vector2(self.screen_width / 2, self.screen_height / 2), 'boss1', 10, 600)
+        self.boss = Boss(pygame.Vector2(self.screen_width / 2, self.screen_height / 2), 'boss1', 600, 600)
         self.bossIsSpawn = True
