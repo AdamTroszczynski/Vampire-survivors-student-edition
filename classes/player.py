@@ -17,9 +17,9 @@ class Player:
 
     def set_classes(self, name):
         classes = {
-            'warrior': {'speed': 300, 'hp': 5, 'dmg': 15, 'ammo': 2, 'reload_time': 1},
-            'wizard': {'speed': 400, 'hp': 3, 'dmg': 20, 'ammo': 3, 'reload_time': 1.5},
-            'king': {'speed': 400, 'hp': 2, 'dmg': 35, 'ammo': 5, 'reload_time': 1}
+            'warrior': {'speed': 300, 'hp': 7, 'dmg': 15, 'ammo': 2, 'reload_time': 1},
+            'wizard': {'speed': 350, 'hp': 4, 'dmg': 25, 'ammo': 3, 'reload_time': 1.5},
+            'king': {'speed': 300, 'hp': 2, 'dmg': 35, 'ammo': 5, 'reload_time': 1}
         }
         
         if name in classes:

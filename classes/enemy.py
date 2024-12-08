@@ -39,13 +39,13 @@ class Enemy:
 
     def set_attributes(self):
         if self.type == 1:
-            self.speed = 250
+            self.speed = 300
             self.hp = 10
         elif self.type == 2:
-            self.speed = 50
+            self.speed = 200
             self.hp = 60
         elif self.type == 3:
-            self.speed = 100
+            self.speed = 200
             self.hp = 30
         elif self.type == 4:
             self.speed = 300
